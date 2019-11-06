@@ -15,11 +15,11 @@ public class cubeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
     void OnMouseDown()
     {
             myGameController.ProcessClick(gameObject, myX, myY);
         
     }
+
 }

@@ -66,7 +66,6 @@ public class gameController : MonoBehaviour
     {
         // When the player clicks an airplane
 
-
         if (x == airplaneX && y == airplaneY)
         {   //should highlight in some way to show that it’s the active airplane. (Change to a different color, glow, enlarge, etc.)
             //(activate)
@@ -74,7 +73,8 @@ public class gameController : MonoBehaviour
             {
                 airplaneActive = true;
                 cubeClicked.transform.localScale *= 1.5f;
-            } else
+            }
+            else
             {
 
                 //If the player clicks the active airplane, it should deactivate.
@@ -110,19 +110,91 @@ public class gameController : MonoBehaviour
                 cubes[x, y].transform.localScale *= 1.5f;
             }
         }
+
     }
 
+         
+    void ClearLastSpace(){
+      if (airplaneX == depotX && airplaneY == depotY)
+      {
+        cubes[depotX, depotY].GetComponent<Renderer>().material.color = Color.black;
+        cubes[depotX, depotY].transform.localScale /= 1.5f;
+      } else
+      {
+         cubes[airplaneX, airplaneY].GetComponent<Renderer>().material.color = Color.white;
+         cubes[airplaneX, airplaneY].transform.localScale /= 1.5f;
+      }
+     }    
+          
+    public void DetectKeyboardInput()
+    {//if player presses left key when at x!= 0, if player press right key when at x != gridwidth-1
+     //if player presses up key when at y!= gridheight-1, if player presses down when y != 0
+     //can possibly put that in one line of if()
+
+        //else give player error message (oops ur too far x)
+
+        if (airplaneActive) {
+
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                if (airplaneY != 0)
+                {
+                    ClearLastSpace();
+                    //move to new spot
+                    airplaneY--;
+                    cubes[airplaneX, airplaneY].GetComponent<Renderer>().material.color = Color.red;
+                    cubes[airplaneX, airplaneY].transform.localScale *= 1.5f;
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                if (airplaneY != gridHeight - 1)
+                {
+                    ClearLastSpace();
+                    //move to new spot
+                    airplaneY++;
+                    cubes[airplaneX, airplaneY].GetComponent<Renderer>().material.color = Color.red;
+                    cubes[airplaneX, airplaneY].transform.localScale *= 1.5f;
+                }
+            }
+
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                if (airplaneX != gridWidth - 1)
+                {
+                    ClearLastSpace();
+
+                    //move to new spot
+                    airplaneX++;
+                    cubes[airplaneX, airplaneY].GetComponent<Renderer>().material.color = Color.red;
+                    cubes[airplaneX, airplaneY].transform.localScale *= 1.5f;
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                if (airplaneX != 0)
+                {
+                    ClearLastSpace();
+
+                    //move to new spot
+                    airplaneX--;
+                    cubes[airplaneX, airplaneY].GetComponent<Renderer>().material.color = Color.red;
+                    cubes[airplaneX, airplaneY].transform.localScale *= 1.5f;
+                }
+            }  
+        }
+      }
     void LoadCargo()
     {
         if (airplaneX == startX && airplaneY == startY)
         {
             airplaneCargo += cargoGain;
-                airplaneCargo = Math.Min(airplaneCargo, airplaneCap);
+            airplaneCargo = Math.Min(airplaneCargo, airplaneCap);
         }
     }
     void DeliverCargo()
     {
-        if (airplaneX== depotX && airplaneY == depotY)
+        if (airplaneX == depotX && airplaneY == depotY)
         {
             score += airplaneCargo;
             airplaneCargo = 0;
@@ -132,6 +204,8 @@ public class gameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        DetectKeyboardInput();
+
         if (Time.time > turnTimer)
         {//take a turn
             //upper left, give cargo
@@ -139,8 +213,10 @@ public class gameController : MonoBehaviour
             //lower right, score points
             DeliverCargo();
 
-            print("Cargo: " + airplaneCargo+ " _ Score: " + score);
+            print("Cargo: " + airplaneCargo + " _ Score: " + score);
             turnTimer += turnLength;
         }
     }
 }
+
+
